@@ -46,7 +46,7 @@ function App() {
   
   async function deleteTodo(todoId){
     try{
-      const response = await fetch(`https://mern-todo-vert.vercel.app//${todoId}`,{
+      const response = await fetch(`https://mern-todo-vert.vercel.app/${todoId}`,{
         'method': 'DELETE',
       });
 
@@ -60,7 +60,7 @@ function App() {
 
     async function completeTodo(todoId){
     try{
-      const response = await fetch(`https://mern-todo-vert.vercel.app//${todoId}`,{
+      const response = await fetch(`https://mern-todo-vert.vercel.app/${todoId}`,{
       'method': 'PUT'
     });
 

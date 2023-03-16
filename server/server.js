@@ -11,12 +11,12 @@ const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 // create app
 const app = express();
 
-// env config
-dotenv.config();
-
 // Request object
 app.use(cors());
 app.use(express.json());
+
+// env config
+dotenv.config();
 
 // Port
 const port = process.env.PORT || 8000;
