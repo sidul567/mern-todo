@@ -13,7 +13,7 @@ function App() {
 
   async function getTodos(){
     try{
-      const response = await fetch('http://localhost:3001');
+      const response = await fetch('https://mern-todo-vert.vercel.app/');
       const data = await response.json();
       console.log(data);
       setTodos(data);
@@ -25,7 +25,7 @@ function App() {
   async function createTodo(){
     try{
       if(newTodo.trim() !== ""){
-        const response = await fetch('http://localhost:3001',{
+        const response = await fetch('https://mern-todo-vert.vercel.app/',{
         'method': 'POST',
         'headers': {
           'content-type': 'application/json'
@@ -46,7 +46,7 @@ function App() {
   
   async function deleteTodo(todoId){
     try{
-      const response = await fetch(`http://localhost:3001/${todoId}`,{
+      const response = await fetch(`https://mern-todo-vert.vercel.app//${todoId}`,{
         'method': 'DELETE',
       });
 
@@ -60,7 +60,7 @@ function App() {
 
     async function completeTodo(todoId){
     try{
-      const response = await fetch(`http://localhost:3001/${todoId}`,{
+      const response = await fetch(`https://mern-todo-vert.vercel.app//${todoId}`,{
       'method': 'PUT'
     });
 

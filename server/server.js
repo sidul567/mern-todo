@@ -10,8 +10,13 @@ const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 
 // create app
 const app = express();
+
 // env config
 dotenv.config();
+
+// Request object
+app.use(cors());
+app.use(express.json());
 
 // Port
 const port = process.env.PORT || 8000;
@@ -20,10 +25,7 @@ const port = process.env.PORT || 8000;
 mongoose.connect(process.env.MONGO_STRING)
 .then(()=>console.log("Database connection successfully!"))
 .catch((err)=>console.log(err))
- 
-// Request object
-app.use(express.json());
-app.use(cors());
+
 
 // routing
 app.use('/',todoRouter);
