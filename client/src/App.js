@@ -122,7 +122,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      <h1>My todos</h1>
+      <h1>Hello todos</h1>
       <div className="todos">
         {
           loading && (
