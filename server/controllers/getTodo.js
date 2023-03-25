@@ -49,9 +49,22 @@ async function deleteTodo(req,res,next){
     }
 }
 
+async function updateTodoText(req,res,next){
+    try{
+        const todo = await Todo.findByIdAndUpdate(req.params.id, {text: req.body.text}, {
+            'new': true,
+        });
+
+        res.json(todo);
+    }catch(err){
+        next(err);
+    }
+}
+
 module.exports = {
     getTodo,
     addTodo,
     updateTodo,
-    deleteTodo
+    deleteTodo,
+    updateTodoText,
 }

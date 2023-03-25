@@ -72,6 +72,14 @@ body {
     text-decoration: line-through;
 }
 
+.todo .edit{
+    width: 25px;
+    height: 25px;
+    font-size: 23px;
+    margin-right: 10px;
+    color: #019b30;
+}
+
 .todo .delete {
     background-color: #D81E5B;
     color: #fff;
@@ -159,6 +167,7 @@ body {
     margin-bottom: 30px;
     font-weight: 800;
     color: #243763;
+    text-transform: uppercase;
 }
 
 .add-todo input {

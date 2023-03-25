@@ -1,15 +1,18 @@
 import {UilTimes} from '@iconscout/react-unicons';
 import { useEffect, useState } from 'react';
 import {ThreeCircles} from 'react-loader-spinner';
+import {FaEdit} from 'react-icons/fa'
 import {ToastContainer, toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import Popup from './components/Popup';
 
 function App() {
 
   const [todos, setTodos] = useState([]);
-  const [popup, setPopup] = useState(false);
+  const [popup, setPopup] = useState("");
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(false);
+  const [editTodo, setEditTodo] = useState({text: ""});
 
   useEffect(()=>{
     getTodos();
@@ -86,7 +89,7 @@ function App() {
     }
   }
 
-    async function completeTodo(todoId){
+  async function completeTodo(todoId){
     try{
       setLoading(true);
       const response = await fetch(`https://mern-todo-vert.vercel.app/${todoId}`,{
@@ -106,7 +109,56 @@ function App() {
     }
   }
 
-  console.log(todos); 
+  function createTodoHandler(name, todoText){
+    if(name==="Create"){
+      setNewTodo(todoText);
+    }else{
+      setEditTodo({...editTodo, text: todoText});
+    }
+  }
+
+  function popupHandler(value){
+    setPopup(value);
+  }
+
+  async function updateTodo(){
+    try{
+      setLoading(true);
+      const response = await fetch(`http://localhost:9000/updateText/${editTodo.id}`, {
+        'method': 'PUT',
+        'headers': {
+          'content-type': 'application/json'
+        },
+        'body': JSON.stringify({
+          text: editTodo.text
+        })
+      })
+
+      const data = await response.json();
+
+      setLoading(false);
+      toast.success('Todo Updated Successfully!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTodos(todos=>todos.map((todo)=>{
+        if(todo._id === data._id){
+          return {...todo, text: data.text};
+        }
+        return todo;
+      }));
+      setPopup(false);
+      setEditTodo({...editTodo, text: ""});
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   return (
     <div className="container">
@@ -147,7 +199,8 @@ function App() {
             <div className={todo.complete? "todo is-completed" : "todo"} key={todo._id} onClick={()=>completeTodo(todo._id)}>
               <div className="checkbox"></div>
               <div className="text">{todo.text}</div>
-              <div className="delete" onClick={()=>deleteTodo(todo._id)}><UilTimes /></div>
+              <div className="edit" onClick={(e)=>{e.stopPropagation();setEditTodo({id: todo._id, text: editTodo.text !== "" ? editTodo.text: todo.text}); setPopup("edit");}}><FaEdit /></div>
+              <div className="delete" onClick={(e)=>{e.stopPropagation();deleteTodo(todo._id)}}><UilTimes /></div>
             </div>
           ))
         }
@@ -158,23 +211,26 @@ function App() {
         }
       </div>
 
-      <div className="popupbtn" onClick={()=>setPopup(true)}>+</div>
+      <div className="popupbtn" onClick={()=>setPopup("create")}>+</div>
 
       {
-        popup && (
-          <div className="add-todo-overlay">
-            <div className="add-todo">
-              <div className="close-btn" onClick={()=>setPopup(false)}><UilTimes /></div>
-              <h3>ADD TODO</h3>
-              <input 
-                type="text"
-                value={newTodo}
-                onChange={(e)=>setNewTodo(e.target.value)}
-              />
-              <button onClick={createTodo}>Create Todo</button>
-            </div>
-          </div>
-        )
+        popup && (popup==="create" ? (
+          <Popup 
+            todoTextHandler={createTodoHandler} 
+            value={newTodo}  
+            onClickHandler={createTodo} 
+            popupHandler = {popupHandler}
+            buttonText = {"Create"}
+          />
+        ) : (
+          <Popup 
+            todoTextHandler={createTodoHandler} 
+            value={editTodo.text}  
+            onClickHandler={updateTodo} 
+            popupHandler = {popupHandler}
+            buttonText = {"Update"}
+          />
+        ))
       }
     </div>
   );
