@@ -124,7 +124,7 @@ function App() {
   async function updateTodo(){
     try{
       setLoading(true);
-      const response = await fetch(`http://localhost:9000/updateText/${editTodo.id}`, {
+      const response = await fetch(`https://mern-todo-vert.vercel.app/updateText/${editTodo.id}`, {
         'method': 'PUT',
         'headers': {
           'content-type': 'application/json'
