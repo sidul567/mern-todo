@@ -66,6 +66,7 @@ body {
 .todo .text {
     width: 90%;
     font-size: 20px;
+    max-width: 400px;
 }
 
 .todo.is-completed .text {
@@ -107,6 +108,60 @@ body {
     color: blueviolet;
     font-weight: 700;
     text-align: center;
+}
+
+.search-todo{
+    position: relative;
+}
+
+.search-todo input{
+    width: 100%;
+    padding: 10px;
+    padding-right: 30px;
+    outline: none;
+    border: none;
+    font-size: 20px;
+    background-color: transparent;
+    border-bottom: 2px solid #CCD5AE;
+}
+
+.search-icon{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: #369f14;
+    font-size: 20px;
+}
+
+.filter-option{
+    display: flex;
+    background-color: #f9e25da6;
+    padding: 10px;
+    border-radius: 5px;
+    gap: 20px;
+    font-size: 20px;
+}
+
+.filter-option input{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+  
+    border: 2px solid #999;
+    transition: 0.2s all linear;
+    margin-right: 5px;
+  
+    position: relative;
+    top: 4px;
+}
+
+.filter-option input:checked{
+    border: 6px solid #22c206;
+    outline: unset !important;
 }
 
 .popupbtn {
@@ -213,6 +268,8 @@ body {
 
     .todo .text {
         font-size: 18px;
+        width: 90%;
+        max-width: 185px;
     }
 
     .todo .delete, .add-todo .close-btn {

@@ -1,7 +1,7 @@
 import {UilTimes} from '@iconscout/react-unicons';
 import { useEffect, useState } from 'react';
 import {ThreeCircles} from 'react-loader-spinner';
-import {FaEdit} from 'react-icons/fa'
+import {FaEdit, FaSearch} from 'react-icons/fa'
 import {ToastContainer, toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import Popup from './components/Popup';
@@ -9,10 +9,13 @@ import Popup from './components/Popup';
 function App() {
 
   const [todos, setTodos] = useState([]);
+  const [filteredTodos, setFilteredTodos] = useState([]);
   const [popup, setPopup] = useState("");
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(false);
   const [editTodo, setEditTodo] = useState({text: ""});
+  const [searchValue, setSearchValue] = useState("");
+  const [checkedValue, setCheckedValue] = useState("all");
 
   useEffect(()=>{
     getTodos();
@@ -25,6 +28,7 @@ function App() {
       const data = await response.json();
       setLoading(false);
       setTodos(data);
+      setFilteredTodos(data);
     }catch(err){
       console.log(err);
     }
@@ -160,6 +164,34 @@ function App() {
     }
   }
 
+  function handleSearchFilter(e){
+    setSearchValue(e.target.value);
+    if(checkedValue === "all"){
+      setFilteredTodos(todos.filter((todo)=>todo.text.toLowerCase().includes(e.target.value.toLowerCase())));
+    }else if(checkedValue === "active"){
+      setFilteredTodos(todos.filter((todo)=>{
+        return todo.complete && todo.text.toLowerCase().includes(e.target.value.toLowerCase())
+      }));
+    }
+    else if(checkedValue === "inactive"){
+      setFilteredTodos(todos.filter((todo)=>{
+        return !todo.complete && todo.text.toLowerCase().includes(e.target.value.toLowerCase())
+      }));
+    }
+  }
+
+  function handleCheckedChange(e){
+    setCheckedValue(e.target.value);
+    if(e.target.value === "all"){
+      setFilteredTodos(todos);
+    }else if(e.target.value === "active"){
+      setFilteredTodos(todos.filter((todo)=>todo.complete));
+    }
+    else if(e.target.value === "inactive"){
+      setFilteredTodos(todos.filter((todo)=>!todo.complete));
+    }
+  }
+
   return (
     <div className="container">
       <ToastContainer 
@@ -194,8 +226,26 @@ function App() {
             </div>
           )
         }
+
+        <div className="search-todo">
+          <input type="text" placeholder='Search Todo' value={searchValue} onChange={handleSearchFilter} />
+          <div className="search-icon"><FaSearch /></div>
+        </div>
+
+        <div className="filter-option">
+          <div className="all">
+            <input type="radio" name="filter" id="all" value="all" checked={checkedValue==="all"} onChange={handleCheckedChange} /><label htmlFor='all'>All</label>
+          </div> 
+          <div className="active">
+            <input type="radio" name="filter" id="active" value="active" checked={checkedValue==="active"} onChange={handleCheckedChange} /><label htmlFor='active'>Active</label>
+          </div> 
+          <div className="inactive">
+            <input type="radio" name="filter" id="inactive" value="inactive" checked={checkedValue==="inactive"} onChange={handleCheckedChange} /><label htmlFor='inactive'>Inactive</label>
+          </div> 
+        </div>
+
         {
-          todos.length > 0 && !loading && todos.map((todo)=>(
+          filteredTodos.length > 0 && !loading && filteredTodos.map((todo)=>(
             <div className={todo.complete? "todo is-completed" : "todo"} key={todo._id} onClick={()=>completeTodo(todo._id)}>
               <div className="checkbox"></div>
               <div className="text">{todo.text}</div>
@@ -205,7 +255,7 @@ function App() {
           ))
         }
         {
-          todos.length === 0 && !loading && (
+          filteredTodos.length === 0 && !loading && (
             <div className="no-todo">Empty Todos!</div>
           )
         }
