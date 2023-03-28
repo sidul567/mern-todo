@@ -60,6 +60,9 @@ function App() {
           theme: "light",
         });
         setTodos([...todos, data]);
+        if(checkedValue === "all" || checkedValue === "inactive"){
+          setFilteredTodos([...filteredTodos, data]);
+        }
         setPopup(false);
         setNewTodo("");
       }
@@ -88,11 +91,11 @@ function App() {
         theme: "light",
       });
       setTodos(todos=>todos.filter(todo=>todo._id !== data._id));
+      setFilteredTodos(todos=>todos.filter(todo=>todo._id !== data._id));
     }catch(err){
       console.log(err);
     }
   }
-
   async function completeTodo(todoId){
     try{
       setLoading(true);
@@ -108,6 +111,13 @@ function App() {
         }
         return todo;
       }));
+      setFilteredTodos(todos=>todos.map(todo=>{
+        if(todo._id === data._id){
+          todo.complete = data.complete;
+        }
+        return todo;
+      }));
+      updateFilteredTodos(checkedValue);
     }catch(err){
       console.log(err);
     }
@@ -157,6 +167,12 @@ function App() {
         }
         return todo;
       }));
+      setFilteredTodos(filteredTodos=>filteredTodos.map((todo)=>{
+        if(todo._id === data._id){
+          return {...todo, text: data.text};
+        }
+        return todo;
+      }));
       setPopup(false);
       setEditTodo({...editTodo, text: ""});
     }catch(err){
@@ -182,12 +198,16 @@ function App() {
 
   function handleCheckedChange(e){
     setCheckedValue(e.target.value);
-    if(e.target.value === "all"){
+    updateFilteredTodos(e.target.value);
+  }
+
+  function updateFilteredTodos(checkValue){
+    if(checkValue === "all"){
       setFilteredTodos(todos);
-    }else if(e.target.value === "active"){
+    }else if(checkValue === "active"){
       setFilteredTodos(todos.filter((todo)=>todo.complete));
     }
-    else if(e.target.value === "inactive"){
+    else if(checkValue === "inactive"){
       setFilteredTodos(todos.filter((todo)=>!todo.complete));
     }
   }
