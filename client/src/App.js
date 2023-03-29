@@ -19,7 +19,22 @@ function App() {
 
   useEffect(()=>{
     getTodos();
-  },[])
+  },[]);
+
+  useEffect(()=>{
+    if(checkedValue === "all"){
+      setFilteredTodos(todos.filter((todo)=>todo.text.toLowerCase().includes(searchValue.toLowerCase())));
+    }else if(checkedValue === "active"){
+      setFilteredTodos(todos.filter((todo)=>{
+        return todo.complete && todo.text.toLowerCase().includes(searchValue.toLowerCase())
+      }));
+    }
+    else if(checkedValue === "inactive"){
+      setFilteredTodos(todos.filter((todo)=>{
+        return !todo.complete && todo.text.toLowerCase().includes(searchValue.toLowerCase())
+      }));
+    }
+  },[checkedValue, searchValue, todos]);
 
   async function getTodos(){
     try{
@@ -60,8 +75,12 @@ function App() {
           theme: "light",
         });
         setTodos([...todos, data]);
-        if(checkedValue === "all" || checkedValue === "inactive"){
-          setFilteredTodos([...filteredTodos, data]);
+        if(checkedValue === "all"){
+          setFilteredTodos(todos.filter((todo)=>todo.text.toLowerCase().includes(searchValue.toLowerCase())));
+        }else if(checkedValue === "inactive"){
+          setFilteredTodos(todos.filter((todo)=>{
+            return !todo.complete && todo.text.toLowerCase().includes(searchValue.toLowerCase())
+          }));
         }
         setPopup(false);
         setNewTodo("");
@@ -117,7 +136,6 @@ function App() {
         }
         return todo;
       }));
-      updateFilteredTodos(checkedValue);
     }catch(err){
       console.log(err);
     }
@@ -182,34 +200,10 @@ function App() {
 
   function handleSearchFilter(e){
     setSearchValue(e.target.value);
-    if(checkedValue === "all"){
-      setFilteredTodos(todos.filter((todo)=>todo.text.toLowerCase().includes(e.target.value.toLowerCase())));
-    }else if(checkedValue === "active"){
-      setFilteredTodos(todos.filter((todo)=>{
-        return todo.complete && todo.text.toLowerCase().includes(e.target.value.toLowerCase())
-      }));
-    }
-    else if(checkedValue === "inactive"){
-      setFilteredTodos(todos.filter((todo)=>{
-        return !todo.complete && todo.text.toLowerCase().includes(e.target.value.toLowerCase())
-      }));
-    }
   }
 
   function handleCheckedChange(e){
     setCheckedValue(e.target.value);
-    updateFilteredTodos(e.target.value);
-  }
-
-  function updateFilteredTodos(checkValue){
-    if(checkValue === "all"){
-      setFilteredTodos(todos);
-    }else if(checkValue === "active"){
-      setFilteredTodos(todos.filter((todo)=>todo.complete));
-    }
-    else if(checkValue === "inactive"){
-      setFilteredTodos(todos.filter((todo)=>!todo.complete));
-    }
   }
 
   return (
